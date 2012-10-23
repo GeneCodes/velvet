@@ -23,6 +23,9 @@ Copyright 2007, 2008 Daniel Zerbino (zerbino@ebi.ac.uk)
 #include <time.h>
 #include <math.h>
 #include <sys/time.h>
+#if defined(_WIN32) || defined(__WIN32__) || defined(WIN32)
+#include "windows/sys/time.h"
+#endif
  
 #ifdef _OPENMP
 #include <omp.h>

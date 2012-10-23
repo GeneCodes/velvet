@@ -29,6 +29,10 @@ Copyright 2009 Sylvain Foret (sylvain.foret@anu.edu.au)
 #include "allocArray.h"
 #include "utility.h"
 
+#if defined(_WIN32) || defined(__WIN32__) || defined(WIN32)
+#include "windows/pagesize.h"
+#endif
+
 #ifdef DEBUG
 #define NB_PAGES_ALLOC    1
 #define BLOCKS_ALLOC_SIZE 1
@@ -53,7 +57,11 @@ static void initAllocArray(AllocArray * array, size_t elementSize, char * name)
 {
 	array->freeElements = NULL;
 	array->elementSize = elementSize;
+#if defined(_WIN32) || defined(__WIN32__) || defined(WIN32)
+	array->blockSize = get_pagesize() * NB_PAGES_ALLOC;
+#else
 	array->blockSize = sysconf (_SC_PAGESIZE) * NB_PAGES_ALLOC;
+#endif
 	array->maxElements = array->blockSize / array->elementSize;
 	array->maxBlocks = BLOCKS_ALLOC_SIZE;
 	array->blocks = mallocOrExit (array->maxBlocks, void*);

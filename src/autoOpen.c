@@ -1,11 +1,53 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#if !defined(_WIN32) && !defined(__WIN32) && !defined(WIN32)
 #include <sys/wait.h>
+#endif
 #include <string.h>
 
 #include "autoOpen.h"
 
+// For Windows, we do not expect gzip, bzip2, etc. to be
+// present on the system.  The auto-unzip functionality should (in the future)
+// be at least partially reclaimed by using zlib's built-in
+// gzip functions.
+#if defined(_WIN32) || defined(__WIN32) || defined(WIN32)
+AutoFile* openFileAuto(char*filename)
+{
+	if (strcmp(filename, "-")==0)
+		  exitErrorf(EXIT_FAILURE, false, "Cannot read from stdin in auto mode\n");
+	
+	AutoFile* seqFile = calloc(1, sizeof(AutoFile));
+  	seqFile->file = fopen(filename, "r");
+	seqFile->pid = 0;
+	seqFile->decompressor = "Raw read";
+	
+	if (!seqFile->file)
+		return NULL;
+	
+	int c = fgetc(seqFile->file);
+	if (c=='>' || c=='@')
+	{
+		// Ok, looks like FASTA or FASTQ
+		ungetc(c, seqFile->file);
+		seqFile->first_char = c;
+		return seqFile;
+	}
+	else
+	{
+		fclose(seqFile->file);
+		return NULL;
+	}
+}
+
+void closeFileAuto(AutoFile* seqFile)
+{
+	if (!seqFile)
+		return;
+	fclose(seqFile->file);
+}
+#else
 // Implementation of "popen" that ignores stderr
 static FILE* popenNoStderr(const char *exe, const char *const argv[], int* retPid)
 {
@@ -105,3 +147,4 @@ void closeFileAuto(AutoFile* seqFile)
 	else
 		fclose(seqFile->file);
 }
+#endif

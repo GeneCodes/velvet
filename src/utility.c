@@ -24,6 +24,9 @@ Copyright 2009 John Marshall (jm18@sanger.ac.uk)
 #include <stdio.h>
 #include <errno.h>
 #include <sys/time.h>
+#if defined(_WIN32) || defined(__WIN32__) || defined(WIN32)
+#include "windows/sys/time.h"
+#endif
 
 #include "globals.h"
 #include "utility.h"

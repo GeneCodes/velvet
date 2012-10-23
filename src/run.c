@@ -21,7 +21,10 @@ Copyright 2007, 2008 Daniel Zerbino (zerbino@ebi.ac.uk)
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
-#if defined(_WIN32) || defined(__WIN32__) || defined(WIN32)
+
+#if defined(__MINGW64__) || defined(__MINGW32__)
+#include <dirent.h>
+#elif defined(_WIN32) || defined(__WIN32__) || defined(WIN32)
 #include <uce-dirent.h>
 #define Arc v_Arc
 #else
@@ -222,7 +225,11 @@ int main(int argc, char **argv)
 		dir = opendir(directory);
 
 		if (dir == NULL)
+#if defined(_WIN32) || defined(__WIN32__) || defined(WIN32)
+			_mkdir(directory);
+#else
 			mkdir(directory, 0777);
+#endif
 		else {
 			sprintf(buf, "%s/PreGraph", directory);
 			remove(buf);
