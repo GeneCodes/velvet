@@ -1,5 +1,6 @@
 *.o
 *.exe
 *.obj
+tests/velvet.test.*
 velvetg
 velveth
