@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#if !defined(_WIN32) && !defined(__WIN32) && !defined(WIN32)
+#if !defined(__MINGW64__) && !defined(__MINGW32__)
 #include <sys/wait.h>
 #endif
 #include <string.h>
@@ -12,7 +12,7 @@
 // present on the system.  The auto-unzip functionality should (in the future)
 // be at least partially reclaimed by using zlib's built-in
 // gzip functions.
-#if defined(_WIN32) || defined(__WIN32) || defined(WIN32)
+#if defined(__MINGW64__) || defined(__MINGW32__)
 AutoFile* openFileAuto(char*filename)
 {
 	if (strcmp(filename, "-")==0)
