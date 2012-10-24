@@ -30,6 +30,16 @@ For colorspace Velvet replace that command with
 
 > make color
 
+On Windows, under MinGW-w64, type
+
+> make -f Makefile.mingw
+
+for 64-bit compilation and
+
+> make -f Makefile.mingw MAKE32=1
+
+for 32-bit compilation.
+
 Otherwise compile each *.c file separately, then execute the default
 instructions at the top of Makefile. 
 
