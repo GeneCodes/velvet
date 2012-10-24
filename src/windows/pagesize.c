@@ -1,8 +1,9 @@
 #include <Windows.h>
+#include <sys/types.h>
 
-unsigned int get_pagesize()
+size_t get_pagesize()
 {
 	SYSTEM_INFO info;
 	GetNativeSystemInfo(&info);
-	return (unsigned int)info.dwPageSize;
+	return info.dwAllocationGranularity;
 }

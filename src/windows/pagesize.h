@@ -1,2 +1,3 @@
+#include <sys/types.h>
 
-unsigned int get_pagesize();
+size_t get_pagesize();
