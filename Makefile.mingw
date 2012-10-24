@@ -1,6 +1,6 @@
 CC = gcc
 CFLAGS = -Wall
-DEBUG = -g
+DEBUG = -ggdb
 LIBS = -lm
 OPT = -O3
 MAXKMERLENGTH=31
