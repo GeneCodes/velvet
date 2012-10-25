@@ -1,5 +1,5 @@
-Velvet for Windows
-==================
+Velvet 1.2.08 for Windows
+=========================
 
 Source Code Modifications
 -------------------------
