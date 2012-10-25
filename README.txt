@@ -1,7 +1,7 @@
 README.TXT
 
 VELVET SOURCE 
-March 28 2008
+October 25 2012
 Daniel Zerbino
 
 NOTE: The PDF manual in this directory contains all the information contained
