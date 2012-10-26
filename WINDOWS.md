@@ -12,10 +12,10 @@ Velvet was designed for compilation under Unix/POSIX-compliant systems.  To comp
 		
 was added to each source file in which `timersub` is used, namely
 
-		graphReConstruction.c
-		scaffold.c
-		splayTable.c
-		utility.c
+	graphReConstruction.c
+	scaffold.c
+	splayTable.c
+	utility.c
 
 2.	MinGW lacks the `sysconf` function, which is used to get the values of system environment variables at runtime.  `allocArray.c` uses `sysconf` to detect the OS virtual memory page size.  The call to `sysconf` was replaced on Windows with a custom `get_pagesize()` function, declared in `windows/pagesize.h` and implemented in `windows/pagesize.c`, which calls Windows' `GetNativeSystemInfo()` function.  `windows/pagesize.h` was included in `allocArray.c`
 3.	`autoOpen.c` contains many Unix-specific API calls.  The implementations of functions `openFileAuto()` and `closeFileAuto()` were replaced with simpler versions that do not use these Unix-specific features.  As a side effect, automatic decompression of compressed fastA/Q files is no longer supported.
