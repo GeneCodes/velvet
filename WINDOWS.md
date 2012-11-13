@@ -45,5 +45,4 @@ Compilation Settings
 The Velvet `Makefile` was modified to ease multi-platform compilation.  In particular:
 
 1.	Several long lists of object files to be linked were factored out into macro variables so that OS-specific object files could be added.
-2.	Windows-specific object files were added to these lists (on Windows only).
-3.	CFLAGS were modified so that 32-bit and 64-bit compilations can be explicitly invoked by defining either `MAKE32` or `MAKE64` on the command line.
+2.	Windows-specific object files were added to these lists (on MinGW only).
