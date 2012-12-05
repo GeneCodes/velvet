@@ -8,44 +8,62 @@
 
 #include "autoOpen.h"
 
-// For Windows, we do not expect gzip, bzip2, etc. to be
-// present on the system.  The auto-unzip functionality should (in the future)
-// be at least partially reclaimed by using zlib's built-in
-// gzip functions.
+// For Windows, we use the CRT's _popen and _pclose primitives.
+// _popen does not reveal the PID of the invoked process, so we just
+// use seqFile->pid as a boolean flag.
 #if defined(__MINGW64__) || defined(__MINGW32__)
+static const char const* decompressors[] = {"","pigz", "gunzip", "pbunzip2", "bunzip2", NULL};
+
 AutoFile* openFileAuto(char*filename)
 {
+	AutoFile* seqFile = calloc(1, sizeof(AutoFile));
+  	int i;
+
 	if (strcmp(filename, "-")==0)
 		  exitErrorf(EXIT_FAILURE, false, "Cannot read from stdin in auto mode\n");
-	
-	AutoFile* seqFile = calloc(1, sizeof(AutoFile));
-  	seqFile->file = fopen(filename, "r");
-	seqFile->pid = 0;
-	seqFile->decompressor = "Raw read";
-	
-	if (!seqFile->file)
-		return NULL;
-	
-	int c = fgetc(seqFile->file);
-	if (c=='>' || c=='@')
-	{
-		// Ok, looks like FASTA or FASTQ
-		ungetc(c, seqFile->file);
-		seqFile->first_char = c;
-		return seqFile;
+
+	for (i=0; decompressors[i] ; i++) {
+		if (strlen(decompressors[i])==0) {
+			seqFile->file = fopen(filename, "r");
+			seqFile->pid = 0;
+			seqFile->decompressor = "Raw read";
+		} else {
+			char *cmd = malloc(strlen(decompressors[i]) + strlen(filename) + 8, sizeof(char));
+			sprintf(cmd, "%s -c -d %s", decompressors[i], filename);
+			seqFile->file = _popen(cmd, "r");
+			seqFile->decompressor = decompressors[i];
+			seqFile->pid = 1;
+		}
+
+		if (!seqFile->file)
+			continue;
+
+		int c = fgetc(seqFile->file);
+		if (c=='>' || c=='@') {
+			// Ok, looks like FASTA or FASTQ
+            ungetc(c, seqFile->file);
+            seqFile->first_char = c;
+			return seqFile;
+		} else {
+			if (seqFile->pid)
+				_pclose(seqFile->file);
+			else
+				fclose(seqFile->file);
+		}
 	}
-	else
-	{
-		fclose(seqFile->file);
-		return NULL;
-	}
+	//printf("Unable to determine file type\n");
+	return NULL;
 }
 
 void closeFileAuto(AutoFile* seqFile)
 {
 	if (!seqFile)
 		return;
-	fclose(seqFile->file);
+
+	if (seqFile->pid)
+		_pclose(seqFile->file);
+	else
+		fclose(seqFile->file);
 }
 #else
 // Implementation of "popen" that ignores stderr
