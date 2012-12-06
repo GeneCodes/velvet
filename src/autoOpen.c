@@ -28,7 +28,7 @@ AutoFile* openFileAuto(char*filename)
 			seqFile->pid = 0;
 			seqFile->decompressor = "Raw read";
 		} else {
-			char *cmd = malloc(strlen(decompressors[i]) + strlen(filename) + 8, sizeof(char));
+			char *cmd = calloc(strlen(decompressors[i]) + strlen(filename) + 8, sizeof(char));
 			sprintf(cmd, "%s -c -d %s", decompressors[i], filename);
 			seqFile->file = _popen(cmd, "r");
 			seqFile->decompressor = decompressors[i];
