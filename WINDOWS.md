@@ -46,3 +46,6 @@ The Velvet `Makefile` was modified to ease multi-platform compilation.  In parti
 
 1.	Several long lists of object files to be linked were factored out into macro variables so that OS-specific object files could be added.
 2.	Windows-specific object files were added to these lists (on MinGW only).
+3.	`__USE_MINGW_ANSI_STDIO=1` was defined on MinGW so that MinGW's stdio library will be used rather than the one
+	from `msvcrt.dll`.  This fixes an issue where `velvetg` would crash on Windows XP (32-bit) because the version of MSVCRT
+	included with that operating system improperly interprets the `%lld` print format specifier for 64-bit integers.
